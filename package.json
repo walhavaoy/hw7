@@ -1,6 +1,6 @@
 {
   "name": "hello-world-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A standalone Hello World web application using Node.js/Express",
   "main": "dist/index.js",
   "scripts": {
