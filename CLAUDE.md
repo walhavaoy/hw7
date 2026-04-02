@@ -6,10 +6,10 @@ A standalone Hello World web application using Node.js/Express with a clean mini
 
 ## Tech Stack
 
-- **Runtime**: Node.js 20.x
+- **Runtime**: Node.js 22.x
 - **Language**: TypeScript ~5.4
 - **Framework**: Express ~4.21
-- **Container**: Docker multi-stage build (node:20-alpine)
+- **Container**: Docker multi-stage build (node:22-slim)
 
 ## Directory Structure
 
