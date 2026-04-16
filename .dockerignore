@@ -3,5 +3,5 @@ node_modules
 dist
 docs
 *.md
-.env
+.env*
 npm-debug.log
