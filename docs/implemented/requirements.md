@@ -12,7 +12,7 @@ All 7 requirements from the project specification are fully implemented and veri
 | **REQ-02-01** | SHOULD | Clean, minimal UI design without bloat | ✅ Complete | `public/index.html:7-50` (minimal CSS: grid centering, CSS custom properties for theme, system fonts, responsive clamp() heading, 1rem body font-size, 1.5 line-height, 2rem padding, no frameworks or bundles) |
 | **REQ-02-02** | SHOULD | Node.js + Express backend | ✅ Complete | `src/index.ts:1,7` (import express; const app = express), `package.json:12` (express: ^4.21.0) |
 | **REQ-02-03** | SHOULD | Server listens on port 3000 | ✅ Complete | `src/index.ts:8,16` (const PORT = 3000; app.listen(PORT, ...)), `Dockerfile:17` (EXPOSE 3000) |
-| **REQ-02-04** | SHOULD | Multi-stage Dockerfile provided | ✅ Complete | `Dockerfile:1-18` (two-stage build: build stage compiles TS, runtime stage runs Node app) |
+| **REQ-02-04** | SHOULD | Multi-stage Dockerfile provided | ✅ Complete | `Dockerfile:1-21` (two-stage build: build stage compiles TS and copies public/, runtime stage uses `COPY --from=build` for dist/ and public/, sets `ENV NODE_ENV=production`, non-root USER node); `.dockerignore` excludes `.env` and `npm-debug.log` |
 | **REQ-02-05** | SHOULD | No authentication required | ✅ Complete | `src/index.ts` (zero auth middleware; entire server file is 18 lines with only express.static and app.listen calls) |
 | **REQ-02-06** | SHOULD | Runs standalone, no external integrations | ✅ Complete | `package.json:11-14` (only dependencies: express, pino; no DB drivers or external service clients), `src/index.ts` (no outbound HTTP calls, no database connections) |
 | **REQ-02-07** | SHOULD | Written in TypeScript with strict mode | ✅ Complete | `tsconfig.json:1-19` (strict: true), `src/index.ts` (TypeScript source with type annotations), `package.json:18` (typescript: ^5.4.0) |
@@ -48,13 +48,14 @@ All 7 requirements from the project specification are fully implemented and veri
 **Evidence**: Application explicitly listens on port 3000.
 - **Server**: `src/index.ts:8` defines `const PORT = 3000`
 - **Listen**: `src/index.ts:16` calls `app.listen(PORT, ...)`
-- **Container**: `Dockerfile:17` exposes port 3000 for containerized deployments
+- **Container**: `Dockerfile:19` exposes port 3000 for containerized deployments
 
 ### REQ-02-04: Multi-Stage Dockerfile
 **Evidence**: Two-stage Docker build optimizes final image size.
-- **Build stage** (lines 3-9): Compiles TypeScript to JavaScript in node:22-slim image
-- **Runtime stage** (lines 11-18): Copies compiled output and installs only production dependencies
-- **Result**: Final image contains only necessary runtime files, not TypeScript compiler or dev dependencies
+- **Build stage** (`Dockerfile:3-10`): Installs all deps, copies `src/`, `tsconfig.json`, and `public/`, then runs `npm run build`
+- **Runtime stage** (`Dockerfile:12-21`): `npm ci --omit=dev`, copies `dist/` and `public/` via `COPY --from=build`, sets `ENV NODE_ENV=production`, runs as non-root `USER node`, `EXPOSE 3000`
+- **`.dockerignore`**: excludes `node_modules`, `dist`, `.git`, `docs`, `*.md`, `.env`, `npm-debug.log`
+- **Result**: Final image contains only runtime files; TypeScript compiler and dev dependencies absent
 
 ### REQ-02-05: No Authentication
 **Evidence**: Zero authentication mechanisms in the application.
