@@ -9,7 +9,7 @@ All 7 requirements from the project specification are fully implemented and veri
 | ID | Priority | Description | Status | Evidence |
 |---|---------|-------------|--------|----------|
 | **REQ-01-01** | MUST | Single page displays "Hello World" message | ✅ Complete | `public/index.html:34` (`<h1>Hello World</h1>`), served via `src/index.ts:10` (express.static middleware) |
-| **REQ-02-01** | SHOULD | Clean, minimal UI design without bloat | ✅ Complete | `public/index.html:7-30` (minimal CSS: centered flexbox, system fonts, 24px line height, no frameworks or bundles) |
+| **REQ-02-01** | SHOULD | Clean, minimal UI design without bloat | ✅ Complete | `public/index.html:7-50` (minimal CSS: grid centering, CSS custom properties for theme, system fonts, responsive clamp() heading, 1rem body font-size, 1.5 line-height, 2rem padding, no frameworks or bundles) |
 | **REQ-02-02** | SHOULD | Node.js + Express backend | ✅ Complete | `src/index.ts:1,7` (import express; const app = express), `package.json:12` (express: ^4.21.0) |
 | **REQ-02-03** | SHOULD | Server listens on port 3000 | ✅ Complete | `src/index.ts:8,16` (const PORT = 3000; app.listen(PORT, ...)), `Dockerfile:17` (EXPOSE 3000) |
 | **REQ-02-04** | SHOULD | Multi-stage Dockerfile provided | ✅ Complete | `Dockerfile:1-18` (two-stage build: build stage compiles TS, runtime stage runs Node app) |
@@ -26,12 +26,17 @@ All 7 requirements from the project specification are fully implemented and veri
 
 ### REQ-02-01: Clean Minimal UI
 **Evidence**: The UI consists of only essential HTML and CSS, no frameworks or bundlers.
-- **HTML**: `public/index.html` — 38 lines total, semantic structure only
-- **CSS**: `public/index.html:7-30` — 24 lines of vanilla CSS:
-  - Flexbox centering (align-items, justify-content)
-  - System font stack (no web fonts)
-  - Neutral color palette (no design system)
-  - No client-side JavaScript or dependencies
+- **HTML**: `public/index.html` — 52 lines total, semantic structure with heading and subtitle
+- **CSS**: `public/index.html:7-50` — 44 lines of vanilla CSS:
+  - CSS custom properties (--bg, --text, --text-dim, --font-sans) for maintainable theming
+  - Grid centering (`display: grid; place-items: center`) for robust horizontal and vertical alignment
+  - System font stack (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`) via custom property
+  - Explicit body `font-size: 1rem` with `line-height: 1.5` for readable baseline
+  - Generous padding (`padding: 2rem`) for whitespace on mobile/desktop
+  - Responsive heading via `clamp(2.5rem, 6vw, 4rem)` — scales fluidly from 2.5rem (mobile) to 4rem (desktop) without media queries
+  - Neutral color palette: light gray background (#f5f5f5), dark gray text (#1f2937), muted gray accents (#6b7280)
+  - Subtitle styling with muted color (`var(--text-dim)`) and 1.125rem font-size
+  - No client-side JavaScript, frameworks, or build bundlers
 
 ### REQ-02-02: Node.js + Express Backend
 **Evidence**: Server implemented with Express 4.21 on Node.js 22.
